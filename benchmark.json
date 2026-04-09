@@ -1,183 +1,246 @@
 [
   {
     "id": 1,
-    "category": "basic_computation",
+    "category": "heat_transfer_basics",
     "difficulty": "easy",
-    "query": "计算斐波那契数列前20项并画折线图",
+    "query": "计算矩形肋片的效率。已知：肋片材料为硅(导热系数k=148 W/mK)，肋片高度H=0.3mm，肋片厚度t=0.05mm，对流换热系数h=10000 W/m^2K。用肋片效率公式 eta=tanh(mH)/(mH) 计算，其中m=sqrt(2h/(k*t))。画出肋片效率随高度H变化(0.1~1.0mm)的曲线图",
     "ground_truth": {
-      "description": "斐波那契数列前20项",
-      "expected_values": [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765],
+      "description": "矩形肋片效率计算（微通道壁面视为肋片）",
+      "expected_values": {
+        "m": 1644.0,
+        "mH": 0.4932,
+        "eta": 0.9214
+      },
+      "tolerance_percent": 3,
       "key_checks": [
-        "第20项应为6765",
-        "应生成折线图PNG文件"
+        "m = sqrt(2*10000/(148*0.00005)) = 1644 m^-1",
+        "mH = 1644 * 0.0003 = 0.493",
+        "eta = tanh(0.493)/0.493 = 0.921",
+        "效率随H增大而降低",
+        "应生成eta vs H曲线图PNG文件"
       ],
-      "verification_code": "fib = [1, 1]\nfor i in range(18): fib.append(fib[-1] + fib[-2])\nassert fib[-1] == 6765"
+      "verification_code": "import numpy as np\nk = 148; h = 10000; t = 0.05e-3; H = 0.3e-3\nm = np.sqrt(2*h/(k*t))\nmH = m * H\neta = np.tanh(mH) / mH\nassert abs(m - 1644) < 5, f'm={m}'\nassert abs(eta - 0.921) < 0.01, f'eta={eta}'"
     }
   },
   {
     "id": 2,
-    "category": "equation_solving",
+    "category": "heat_transfer_basics",
     "difficulty": "easy",
-    "query": "求解方程 x^3 - 2x - 5 = 0 的所有实数根，画出函数图像",
+    "query": "验证圆管内充分发展层流(恒壁温)的努塞尔数Nu=3.66。条件：管径D=0.5mm，管长L=10mm，流体为水(导热系数kf=0.613 W/mK, 动力粘度mu=8.9e-4 Pa*s, 密度rho=997 kg/m^3, Pr=6.13)，流速u=0.5 m/s。计算Re数确认为层流，计算Nu和对流换热系数h，画出h随流速变化(0.1~2.0 m/s)的曲线",
     "ground_truth": {
-      "description": "三次方程求根",
-      "expected_values": [2.0946],
-      "tolerance": 0.001,
+      "description": "圆管层流充分发展段Nu=3.66验证",
+      "expected_values": {
+        "Re": 279.8,
+        "Nu": 3.66,
+        "h_conv": 4490.0
+      },
+      "tolerance_percent": 5,
       "key_checks": [
-        "唯一实数根约为 2.0946",
-        "应生成函数图像PNG文件",
-        "图像应显示函数与x轴的交点"
+        "Re = rho*u*D/mu = 997*0.5*0.0005/8.9e-4 = 280 (层流，<2300)",
+        "充分发展层流恒壁温: Nu = 3.66",
+        "h = Nu*kf/D = 3.66*0.613/0.0005 = 4490 W/m^2K",
+        "层流时h与流速无关（Nu恒定），h=Nu*kf/D为常数",
+        "应生成h vs u曲线图PNG文件"
       ],
-      "verification_code": "import numpy as np\nfrom numpy.polynomial import polynomial as P\nroots = np.roots([1, 0, -2, -5])\nreal_roots = roots[np.isreal(roots)].real\nassert any(abs(r - 2.0946) < 0.001 for r in real_roots)"
+      "verification_code": "import numpy as np\nrho=997; u=0.5; D=0.5e-3; mu=8.9e-4; kf=0.613\nRe = rho*u*D/mu\nassert Re < 2300, f'Re={Re}, not laminar'\nNu = 3.66\nh = Nu*kf/D\nassert abs(Re - 280) < 10, f'Re={Re}'\nassert abs(h - 4490) < 300, f'h={h}'"
     }
   },
   {
     "id": 3,
-    "category": "optimization",
-    "difficulty": "medium",
-    "query": "用scipy最小化 Rosenbrock 函数 f(x,y)=(1-x)^2+100(y-x^2)^2，初始点(0,0)，画等高线图并标出最优点",
+    "category": "fluid_mechanics",
+    "difficulty": "easy",
+    "query": "计算矩形微通道的水力直径和摩擦系数。通道宽度Wc=0.1mm，高度Hc=0.3mm，流体为水(密度rho=997kg/m^3, 动力粘度mu=8.9e-4 Pa*s)，流速u=1 m/s。计算水力直径Dh=2*Wc*Hc/(Wc+Hc)、Re数、层流摩擦系数f=Po/Re（矩形通道Poiseuille数Po可用Shah-London关联式：Po=96*(1-1.3553*alpha+1.9467*alpha^2-1.7012*alpha^3+0.9564*alpha^4-0.2537*alpha^5)，其中alpha=Wc/Hc为宽高比）。画出f*Re(即Po)随宽高比alpha(0.1~1.0)变化的曲线",
     "ground_truth": {
-      "description": "Rosenbrock函数优化（经典测试函数）",
-      "expected_values": {"x": 1.0, "y": 1.0, "f_min": 0.0},
-      "tolerance": 0.01,
+      "description": "矩形微通道摩擦系数（Shah-London关联式）",
+      "expected_values": {
+        "Dh_mm": 0.15,
+        "alpha": 0.333,
+        "Re": 168.0,
+        "Po": 68.38,
+        "f": 0.407
+      },
+      "tolerance_percent": 3,
       "key_checks": [
-        "最优解应为 (1, 1)",
-        "最小值应为 0（或非常接近0）",
-        "应生成等高线图PNG文件",
-        "图中应标出最优点位置"
+        "Dh = 2*0.1*0.3/(0.1+0.3) = 0.15 mm",
+        "alpha = Wc/Hc = 0.1/0.3 = 0.333",
+        "Re = rho*u*Dh/mu = 997*1*0.00015/8.9e-4 = 168",
+        "Po(alpha=0.333) = 68.38（Shah-London公式）",
+        "f = Po/Re = 68.38/168 = 0.407",
+        "alpha=1(正方形)时Po=56.91",
+        "应生成Po vs alpha曲线图PNG文件"
       ],
-      "verification_code": "from scipy.optimize import minimize\nfrom scipy.optimize import rosen\nresult = minimize(rosen, [0, 0], method='Nelder-Mead')\nassert abs(result.x[0] - 1.0) < 0.01 and abs(result.x[1] - 1.0) < 0.01\nassert result.fun < 1e-6"
+      "verification_code": "import numpy as np\nWc=0.1e-3; Hc=0.3e-3; rho=997; mu=8.9e-4; u=1.0\nDh = 2*Wc*Hc/(Wc+Hc)\nalpha = Wc/Hc\nRe = rho*u*Dh/mu\nPo = 96*(1 - 1.3553*alpha + 1.9467*alpha**2 - 1.7012*alpha**3 + 0.9564*alpha**4 - 0.2537*alpha**5)\nf = Po/Re\nassert abs(Dh*1000 - 0.15) < 0.01, f'Dh={Dh*1000}mm'\nassert abs(Re - 168) < 5, f'Re={Re}'\nassert abs(Po - 68.38) < 1, f'Po={Po}'\nassert abs(f - 0.407) < 0.01, f'f={f}'"
     }
   },
   {
     "id": 4,
-    "category": "multi_objective",
+    "category": "microchannel_thermal",
     "difficulty": "medium",
-    "query": "用NSGA-II算法优化双目标问题：最小化 f1=x^2, f2=(x-2)^2, x在[-5,5]范围内，画出Pareto前沿",
+    "query": "计算矩形微通道散热器的压降。参数：通道宽度Wc=0.1mm，通道高度Hc=0.3mm，通道长度L=10mm，流体为水(rho=997 kg/m^3, mu=8.9e-4 Pa*s)，流速u=1 m/s。使用公式 dP = 2*f*rho*u^2*L/Dh，其中f=Po/Re，Po用Shah-London关联式（alpha=Wc/Hc）。同时计算单通道的体积流量Q=u*Wc*Hc和泵功率Wp=dP*Q。画出压降和泵功率随流速(0.5~3.0 m/s)变化的双Y轴图",
     "ground_truth": {
-      "description": "双目标优化的Pareto前沿",
-      "expected_values": {"pareto_x_range": [0, 2]},
+      "description": "微通道压降与泵功率计算",
+      "expected_values": {
+        "Dh_mm": 0.15,
+        "f": 0.407,
+        "delta_P_kPa": 54.1,
+        "Q_m3_per_s": 3e-8,
+        "W_pump_mW": 1.62
+      },
+      "tolerance_percent": 5,
       "key_checks": [
-        "Pareto最优解的x值应在[0, 2]区间内",
-        "f1和f2应呈此消彼长的关系（trade-off）",
-        "当x=0时f1=0,f2=4；当x=2时f1=4,f2=0",
-        "应生成Pareto前沿图PNG文件",
-        "Pareto前沿应为连续曲线"
+        "Dh = 0.15mm",
+        "f = Po/Re = 68.38/168 = 0.407",
+        "dP = 2*0.407*997*1^2*0.01/0.00015 = 54096 Pa = 54.1 kPa",
+        "Q = u*Wc*Hc = 1*0.1e-3*0.3e-3 = 3e-8 m^3/s",
+        "Wp = dP*Q = 54096*3e-8 = 1.62 mW（单通道）",
+        "层流中压降与流速成正比，泵功率与流速^2成正比",
+        "应生成双Y轴图PNG文件"
       ],
-      "verification_code": "import numpy as np\nx = np.linspace(0, 2, 100)\nf1 = x**2\nf2 = (x-2)**2\nassert all(f1 + f2 >= 0)  # basic sanity\nassert abs(f1[0] - 0) < 0.01 and abs(f2[0] - 4) < 0.01\nassert abs(f1[-1] - 4) < 0.01 and abs(f2[-1] - 0) < 0.01"
+      "verification_code": "import numpy as np\nWc=0.1e-3; Hc=0.3e-3; L=10e-3; rho=997; mu=8.9e-4; u=1.0\nDh = 2*Wc*Hc/(Wc+Hc)\nalpha = Wc/Hc\nRe = rho*u*Dh/mu\nPo = 96*(1 - 1.3553*alpha + 1.9467*alpha**2 - 1.7012*alpha**3 + 0.9564*alpha**4 - 0.2537*alpha**5)\nf = Po/Re\ndP = 2*f*rho*u**2*L/Dh\nQ = u*Wc*Hc\nWp = dP*Q\nassert abs(dP/1000 - 54.1) < 3, f'dP={dP/1000:.1f} kPa'\nassert abs(Wp*1000 - 1.62) < 0.2, f'Wp={Wp*1000:.3f} mW'"
     }
   },
   {
     "id": 5,
-    "category": "statistics",
-    "difficulty": "easy",
-    "query": "生成1000个服从正态分布N(50,10)的随机数，计算均值、标准差、中位数，画直方图和正态拟合曲线",
+    "category": "microchannel_thermal",
+    "difficulty": "medium",
+    "query": "用一维热阻网络模型计算矩形微通道散热器的总热阻。参数：硅基底(k_si=148 W/mK)，基底厚度t_base=0.1mm，通道宽度Wc=0.1mm，高度Hc=0.3mm，壁厚Ww=0.05mm，通道长度L=10mm，芯片宽度W_chip=10mm。水的物性：kf=0.613 W/mK。用Nu=4.0计算对流换热系数h=Nu*kf/Dh。热阻模型：R_total = R_cond + R_conv，其中R_cond=t_base/(k_si*A_chip)为基底导热热阻，R_conv=1/(h*(eta*A_fin+A_bottom)*N)为对流热阻，eta为肋片效率(m=sqrt(2h/(k_si*Ww)))，A_fin=2*Hc*L为单通道两侧肋片面积，A_bottom=Wc*L为单通道底面面积，N=W_chip/(Wc+Ww)为通道数。画出热阻各分量的堆叠柱状图",
     "ground_truth": {
-      "description": "正态分布统计分析",
-      "expected_values": {"mean_approx": 50, "std_approx": 10},
-      "tolerance": 2.0,
+      "description": "微通道热阻网络模型（1D简化Tuckerman-Pease模型）",
+      "expected_values": {
+        "h_conv": 16347,
+        "N_channels": 66,
+        "eta_fin": 0.886,
+        "R_cond_K_per_W": 0.00676,
+        "R_conv_K_per_W": 0.147,
+        "R_total_K_per_W": 0.154
+      },
+      "tolerance_percent": 10,
       "key_checks": [
-        "均值应接近50（误差<2）",
-        "标准差应接近10（误差<2）",
-        "中位数应接近50（误差<3）",
-        "应生成直方图PNG文件",
-        "直方图应叠加正态拟合曲线"
+        "Dh = 0.15mm, h = Nu*kf/Dh = 4.0*0.613/0.00015 = 16347 W/m^2K",
+        "通道数 N = 10mm/(0.1+0.05)mm = 66",
+        "m = sqrt(2*16347/(148*5e-5)) = 2102, 肋片效率eta = 0.886",
+        "导热热阻 R_cond = 0.1e-3/(148*1e-4) = 0.00676 K/W",
+        "A_fin=6e-6 m^2, A_bottom=1e-6 m^2, A_eff=eta*A_fin+A_bottom=6.31e-6 m^2",
+        "对流热阻 R_conv = 1/(16347*6.31e-6*66) = 0.147 K/W",
+        "总热阻 R_total = 0.007 + 0.147 = 0.154 K/W",
+        "应生成热阻堆叠柱状图PNG文件"
       ],
-      "verification_code": "import numpy as np\nnp.random.seed(42)\ndata = np.random.normal(50, 10, 1000)\nassert abs(np.mean(data) - 50) < 2\nassert abs(np.std(data) - 10) < 2"
+      "verification_code": "import numpy as np\nk_si=148; t_base=0.1e-3; Wc=0.1e-3; Hc=0.3e-3; Ww=0.05e-3\nL=10e-3; kf=0.613; Nu=4.0; W_chip=10e-3; A_chip=W_chip**2\nDh = 2*Wc*Hc/(Wc+Hc)\nh = Nu*kf/Dh\nN = int(W_chip/(Wc+Ww))\nm = np.sqrt(2*h/(k_si*Ww))\neta = np.tanh(m*Hc)/(m*Hc)\nR_cond = t_base/(k_si*A_chip)\nA_fin = 2*Hc*L; A_bottom = Wc*L\nR_conv = 1/(h*(eta*A_fin + A_bottom)*N)\nR_total = R_cond + R_conv\nassert abs(h - 16347) < 500, f'h={h}'\nassert abs(eta - 0.886) < 0.02, f'eta={eta}'\nassert abs(R_total - 0.154) < 0.02, f'R_total={R_total}'"
     }
   },
   {
     "id": 6,
-    "category": "equation_solving",
+    "category": "parametric_study",
     "difficulty": "medium",
-    "query": "用龙格-库塔法(RK4)数值求解常微分方程 dy/dx = -2y + x, y(0)=1, 在x=[0,5]上求解，与解析解对比画图",
+    "query": "参数研究：矩形微通道的宽高比alpha对努塞尔数Nu的影响。使用充分发展层流恒热流条件下矩形通道的Nu关联式：Nu=8.235*(1-2.0421*alpha+3.0853*alpha^2-2.4765*alpha^3+1.0578*alpha^4-0.1861*alpha^5)，其中alpha<=1（alpha为短边/长边）。计算alpha从0.1到1.0时Nu的值，找出最大Nu对应的宽高比。同时画出f*Re(Po)和Nu随alpha变化的双Y轴对比图",
     "ground_truth": {
-      "description": "ODE数值解 vs 解析解",
+      "description": "矩形通道Nu随宽高比变化的参数研究",
       "expected_values": {
-        "analytical_solution": "y = (2x-1)/4 + (5/4)*exp(-2x)",
-        "y_at_x5_approx": 2.25
+        "Nu_at_alpha_1": 3.608,
+        "Nu_at_alpha_0333": 4.795,
+        "Nu_at_alpha_01": 6.785
       },
-      "tolerance": 0.01,
+      "tolerance_percent": 3,
       "key_checks": [
-        "解析解为 y = (2x-1)/4 + (5/4)*exp(-2x)",
-        "x=5处y值应约为2.25",
-        "数值解应与解析解高度吻合（误差<0.01）",
-        "应生成对比图PNG文件"
+        "alpha=1(正方形)时 Nu=3.608",
+        "alpha=0.333时 Nu=4.795",
+        "alpha=0.1时 Nu=6.785",
+        "Nu随alpha减小（通道变窄）而增大",
+        "alpha->0时Nu趋向8.235（平行平板极限）",
+        "应生成Nu和f*Re vs alpha的双Y轴图PNG文件"
       ],
-      "verification_code": "import numpy as np\nx = 5.0\ny_exact = (2*x - 1)/4 + (5/4)*np.exp(-2*x)\nassert abs(y_exact - 2.25) < 0.01"
+      "verification_code": "import numpy as np\ndef Nu_rect(alpha):\n    return 8.235*(1 - 2.0421*alpha + 3.0853*alpha**2 - 2.4765*alpha**3 + 1.0578*alpha**4 - 0.1861*alpha**5)\nassert abs(Nu_rect(1.0) - 3.608) < 0.1, f'Nu(1)={Nu_rect(1.0)}'\nassert abs(Nu_rect(0.333) - 4.795) < 0.2, f'Nu(0.333)={Nu_rect(0.333)}'\nassert abs(Nu_rect(0.1) - 6.785) < 0.2, f'Nu(0.1)={Nu_rect(0.1)}'"
     }
   },
   {
     "id": 7,
-    "category": "linear_algebra",
-    "difficulty": "easy",
-    "query": "求解线性方程组 3x+2y-z=1, 2x-2y+4z=-2, -x+0.5y-z=0，验证解的正确性",
+    "category": "optimization",
+    "difficulty": "medium",
+    "query": "单目标优化：在固定芯片面积10mm*10mm、流速u=1m/s条件下，优化矩形微通道宽度Wc使总热阻R_total最小，同时约束总泵功率不超过200mW。通道高度Hc=0.3mm，壁厚Ww=0.05mm（固定），基底厚度t_base=0.1mm。硅k_si=148 W/mK，水kf=0.613 W/mK, rho=997, mu=8.9e-4。h=Nu*kf/Dh(Nu=4.0)，压降用Shah-London关联式。Wc搜索范围0.02~0.3mm。用scipy.optimize求满足泵功率约束的最小R_total，画出R_total和W_pump vs Wc曲线并标出约束可行域和最优点",
     "ground_truth": {
-      "description": "线性方程组求解",
-      "expected_values": {"x": 1.0, "y": -2.0, "z": -2.0},
-      "tolerance": 0.001,
+      "description": "微通道宽度优化（泵功率约束下最小热阻）",
+      "expected_values": {
+        "optimal_Wc_mm": 0.065,
+        "R_min": 0.095,
+        "W_pump_mW": 196
+      },
+      "tolerance_percent": 20,
       "key_checks": [
-        "x = 1",
-        "y = -2",
-        "z = -2",
-        "代入原方程验证：3(1)+2(-2)-(-2)=1 ✓",
-        "2(1)-2(-2)+4(-2)=-2 ✓",
-        "-1+0.5(-2)-(-2)=0 ✓"
+        "热阻随Wc减小而减小（更多更窄通道，换热更强）",
+        "泵功率随Wc减小而急剧增大（窄通道阻力大）",
+        "存在Wc使得Wp刚好=200mW的约束边界点",
+        "最优Wc约在0.06~0.07mm（泵功率约束的边界上）",
+        "R_total约0.09~0.10 K/W",
+        "应生成双Y轴图并标出可行域和最优点PNG文件"
       ],
-      "verification_code": "import numpy as np\nA = np.array([[3,2,-1],[2,-2,4],[-1,0.5,-1]])\nb = np.array([1,-2,0])\nx = np.linalg.solve(A, b)\nassert np.allclose(x, [1, -2, -2], atol=0.001)"
+      "verification_code": "import numpy as np\nfrom scipy.optimize import brentq\nk_si=148; kf=0.613; rho=997; mu=8.9e-4; Nu=4.0\nHc=0.3e-3; Ww=0.05e-3; t_base=0.1e-3; L=10e-3; u=1.0\nW_chip=10e-3; A_chip=W_chip**2\ndef calc(Wc):\n    Dh=2*Wc*Hc/(Wc+Hc); h=Nu*kf/Dh\n    N=int(W_chip/(Wc+Ww))\n    if N<1: return 1e6,1e6\n    m=np.sqrt(2*h/(k_si*Ww)); eta=np.tanh(m*Hc)/(m*Hc)\n    R=t_base/(k_si*A_chip)+1/(h*(eta*2*Hc*L+Wc*L)*N)\n    alpha=min(Wc,Hc)/max(Wc,Hc); Re=rho*u*Dh/mu\n    Po=96*(1-1.3553*alpha+1.9467*alpha**2-1.7012*alpha**3+0.9564*alpha**4-0.2537*alpha**5)\n    dP=2*(Po/Re)*rho*u**2*L/Dh; Wp=N*dP*u*Wc*Hc\n    return R, Wp*1000\nR_opt, Wp_opt = calc(0.065e-3)\nassert 0.05 < R_opt < 0.15, f'R={R_opt}'\nassert 100 < Wp_opt < 300, f'Wp={Wp_opt}mW'"
     }
   },
   {
     "id": 8,
-    "category": "optimization",
-    "difficulty": "hard",
-    "query": "用模拟退火算法求解旅行商问题(TSP)：10个城市坐标为(0,0),(1,5),(2,3),(5,4),(6,1),(8,6),(7,2),(3,7),(4,1),(9,3)，求最短路径并画出路径图",
+    "category": "microchannel_thermal",
+    "difficulty": "easy",
+    "query": "计算微通道散热器的泵功率和温升。已知：散热器有66个通道，单通道流速u=1m/s，通道截面Wc=0.1mm*Hc=0.3mm，压降dP=54.1kPa，芯片热功率P=100W，总热阻R_total=0.154 K/W，冷却水入口温度T_in=25C。计算：(1)总泵功率W_pump=N*dP*Q_ch(Q_ch=u*Wc*Hc)，(2)芯片最高温度T_max=T_in+P*R_total，(3)水的温升dT_water=P/(rho*cp*N*Q_ch)（水rho=997, cp=4179 J/kgK）。画出芯片温度随热功率(50~300W)变化的曲线",
     "ground_truth": {
-      "description": "10城市TSP问题",
-      "expected_values": {"optimal_distance_upper_bound": 30.0},
+      "description": "微通道散热器整体性能计算",
+      "expected_values": {
+        "W_pump_total_mW": 107.1,
+        "T_max_C": 40.4,
+        "delta_T_water_C": 12.1
+      },
+      "tolerance_percent": 5,
       "key_checks": [
-        "总路径长度应在合理范围内（<30）",
-        "路径应访问所有10个城市恰好一次并返回起点",
-        "应生成路径图PNG文件",
-        "模拟退火是启发式算法，结果可能每次不同但应接近最优"
+        "Q_ch = 1*0.1e-3*0.3e-3 = 3e-8 m^3/s",
+        "总泵功率 W_pump = 66*54100*3e-8 = 0.107W = 107mW",
+        "芯片最高温度 T_max = 25 + 100*0.154 = 40.4C",
+        "水温升 dT = 100/(997*4179*66*3e-8) = 12.1C",
+        "出口水温 T_out = 25+12.1 = 37.1C",
+        "应生成T_max vs P曲线图PNG文件"
       ],
-      "verification_code": "# TSP是NP-hard问题，只验证路径合理性\nimport numpy as np\ncities = [(0,0),(1,5),(2,3),(5,4),(6,1),(8,6),(7,2),(3,7),(4,1),(9,3)]\ndef path_length(order, cities):\n    d = 0\n    for i in range(len(order)):\n        c1, c2 = cities[order[i]], cities[order[(i+1)%len(order)]]\n        d += np.sqrt((c1[0]-c2[0])**2 + (c1[1]-c2[1])**2)\n    return d\n# 顺序遍历的距离作为上界\nassert path_length(list(range(10)), cities) < 40"
+      "verification_code": "import numpy as np\nN=66; dP=54100; Q_ch=3e-8; P=100; R=0.154; T_in=25; rho=997; cp=4179\nW_pump = N*dP*Q_ch\nT_max = T_in + P*R\ndT_water = P/(rho*cp*N*Q_ch)\nassert abs(W_pump*1000 - 107) < 15, f'W_pump={W_pump*1000}mW'\nassert abs(T_max - 40.4) < 2, f'T_max={T_max}C'\nassert abs(dT_water - 12.1) < 1.5, f'dT_water={dT_water}C'"
     }
   },
   {
     "id": 9,
-    "category": "signal_processing",
-    "difficulty": "medium",
-    "query": "生成一个包含50Hz和120Hz成分的信号（采样率1000Hz，持续1秒），加入噪声后用FFT分析频谱，画时域和频域图",
+    "category": "multi_objective_optimization",
+    "difficulty": "hard",
+    "query": "用NSGA-II算法对矩形微通道散热器进行双目标优化：同时最小化热阻R_total和泵功率W_pump。设计变量：通道宽度Wc在[0.03, 0.3]mm，通道高度Hc在[0.1, 0.8]mm，流速u在[0.5, 3.0]m/s。固定参数：壁厚Ww=0.05mm，基底厚度t_base=0.1mm，通道长度L=10mm，芯片宽度10mm，硅k=148 W/mK，水kf=0.613 W/mK, rho=997, mu=8.9e-4。h=Nu*kf/Dh(Nu=4.0)，压降用Shah-London关联式。用deap库实现NSGA-II，种群100，迭代200代，画出Pareto前沿图（横轴热阻，纵轴泵功率）",
     "ground_truth": {
-      "description": "信号频谱分析",
-      "expected_values": {"freq_peaks": [50, 120]},
-      "tolerance": 2.0,
+      "description": "微通道散热器双目标优化Pareto前沿（热阻vs泵功率）",
+      "expected_values": {
+        "R_range_K_per_W": [0.01, 0.5],
+        "W_pump_range_mW": [0.1, 2000]
+      },
       "key_checks": [
-        "FFT频谱中应在50Hz和120Hz处有明显峰值",
-        "采样率1000Hz，信号长度1秒，共1000个采样点",
-        "频率分辨率应为1Hz",
-        "应生成时域图和频域图PNG文件"
+        "Pareto前沿应呈现热阻与泵功率的trade-off关系",
+        "低热阻方案对应高泵功率（高流速、窄通道）",
+        "低泵功率方案对应高热阻（低流速、宽通道）",
+        "Pareto前沿应为光滑连续曲线",
+        "应生成Pareto前沿图PNG文件"
       ],
-      "verification_code": "import numpy as np\nfs = 1000; t = np.arange(0, 1, 1/fs)\nsignal = np.sin(2*np.pi*50*t) + np.sin(2*np.pi*120*t)\nfft_vals = np.abs(np.fft.fft(signal))\nfreqs = np.fft.fftfreq(len(signal), 1/fs)\npositive = freqs > 0\npeak_freqs = freqs[positive][np.argsort(fft_vals[positive])[-2:]]\nassert 49 < min(peak_freqs) < 51 and 119 < max(peak_freqs) < 121"
+      "verification_code": "import numpy as np\nk_si=148; kf=0.613; rho=997; mu=8.9e-4; Nu=4.0; L=10e-3; t_base=0.1e-3; Ww=0.05e-3\ndef calc(Wc, Hc, u):\n    Dh = 2*Wc*Hc/(Wc+Hc)\n    h = Nu*kf/Dh\n    N = int(10e-3/(Wc+Ww))\n    if N<1: return 1e6,1e6\n    m = np.sqrt(2*h/(k_si*Ww)); eta = np.tanh(m*Hc)/(m*Hc)\n    A_chip = 1e-4\n    R = t_base/(k_si*A_chip) + 1/(h*(eta*2*Hc*L+Wc*L)*N)\n    alpha = min(Wc,Hc)/max(Wc,Hc)\n    Re = rho*u*Dh/mu\n    Po = 96*(1-1.3553*alpha+1.9467*alpha**2-1.7012*alpha**3+0.9564*alpha**4-0.2537*alpha**5)\n    f = Po/Re\n    dP = 2*f*rho*u**2*L/Dh\n    Wp = N*dP*u*Wc*Hc\n    return R, Wp\nR1, W1 = calc(0.03e-3, 0.8e-3, 3.0)\nR2, W2 = calc(0.3e-3, 0.1e-3, 0.5)\nassert R1 < R2, f'R1={R1} should < R2={R2}'\nassert W1 > W2, f'W1={W1} should > W2={W2}'"
     }
   },
   {
     "id": 10,
-    "category": "curve_fitting",
-    "difficulty": "medium",
-    "query": "对数据点 x=[0,1,2,3,4,5], y=[2.1, 7.7, 13.6, 27.2, 40.9, 61.1] 进行指数拟合 y=a*exp(b*x)+c，画出数据点和拟合曲线，给出拟合参数和R^2值",
+    "category": "comprehensive_design",
+    "difficulty": "hard",
+    "query": "完整微通道散热器设计任务：芯片面积10mm*10mm，热功率P=150W（热流密度150 W/cm^2），冷却水入口温度T_in=25C，要求芯片最高温度不超过80C，泵功率尽可能小。硅(k=148 W/mK)，水(kf=0.613, rho=997, mu=8.9e-4, cp=4179)。设计变量：通道宽度Wc[0.03~0.3mm]、高度Hc[0.1~0.8mm]、流速u[0.5~3m/s]，壁厚Ww=0.05mm固定。使用h=Nu*kf/Dh(Nu=4.0)和Shah-London关联式。(1)建立热阻网络+压降的热流耦合模型,(2)用优化算法找到满足T_max<=80C下泵功率最小的方案,(3)输出最优几何参数和性能指标,(4)画出设计空间图",
     "ground_truth": {
-      "description": "指数函数拟合",
-      "expected_values": {"a_approx": 2.0, "b_approx": 0.6, "R2_min": 0.99},
+      "description": "微通道散热器完整设计优化（约束优化问题）",
+      "expected_values": {
+        "T_max_constraint": 80,
+        "R_max_K_per_W": 0.367
+      },
       "key_checks": [
-        "拟合应使用 y = a*exp(b*x) + c 形式",
-        "R^2值应大于0.99（拟合良好）",
-        "拟合曲线应通过或接近所有数据点",
-        "应生成散点图+拟合曲线PNG文件",
-        "应输出拟合参数a, b, c的值"
+        "温度约束：T_max = T_in + P*R_total <= 80C -> R_total <= (80-25)/150 = 0.367 K/W",
+        "需同时计算导热热阻和对流热阻",
+        "需考虑水的温升对出口温度的影响",
+        "最优方案应在温度约束边界附近以最小化泵功率",
+        "应输出最优Wc、Hc、u及对应的R_total、dP、W_pump、T_max",
+        "应生成设计空间图PNG文件"
       ],
-      "verification_code": "import numpy as np\nfrom scipy.optimize import curve_fit\ndef model(x, a, b, c): return a * np.exp(b * x) + c\nx = np.array([0,1,2,3,4,5])\ny = np.array([2.1, 7.7, 13.6, 27.2, 40.9, 61.1])\npopt, _ = curve_fit(model, x, y, p0=[1, 0.5, 1])\ny_pred = model(x, *popt)\nss_res = np.sum((y - y_pred)**2)\nss_tot = np.sum((y - np.mean(y))**2)\nR2 = 1 - ss_res/ss_tot\nassert R2 > 0.99"
+      "verification_code": "import numpy as np\nP = 150; T_in = 25; T_max_limit = 80\nR_max = (T_max_limit - T_in) / P\nassert abs(R_max - 0.367) < 0.01, f'R_max={R_max}'\nk_si=148; kf=0.613; Nu=4.0; L=10e-3; t_base=0.1e-3; Ww=0.05e-3\nWc=0.1e-3; Hc=0.3e-3\nDh=2*Wc*Hc/(Wc+Hc); h=Nu*kf/Dh\nN=int(10e-3/(Wc+Ww))\nm=np.sqrt(2*h/(k_si*Ww)); eta=np.tanh(m*Hc)/(m*Hc)\nR_cond=t_base/(k_si*1e-4)\nR_conv=1/(h*(eta*2*Hc*L+Wc*L)*N)\nR_total=R_cond+R_conv\nassert R_total < R_max, f'R_total={R_total:.3f} > R_max={R_max:.3f}, design infeasible'"
     }
   }
 ]

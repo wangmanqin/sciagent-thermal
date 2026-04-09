@@ -23,16 +23,41 @@ def run_python_code(code: str) -> str:
     # 记录执行前已有的 png 文件
     existing_pngs = set(glob.glob(os.path.join(OUTPUTS_DIR, "*.png")))
 
-    # 写入临时脚本
+    # 自动注入 matplotlib 中文字体配置，解决方框问题
+    font_preamble = (
+        "import matplotlib\n"
+        "matplotlib.use('Agg')\n"
+        "import matplotlib.pyplot as plt\n"
+        "import matplotlib.font_manager as fm\n"
+        "import os\n"
+        "\n"
+        "# 自动查找系统中可用的中文字体\n"
+        "_cn_font_names = ['SimHei', 'Microsoft YaHei', 'STSong', 'SimSun',\n"
+        "                  'STHeiti', 'PingFang SC', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei']\n"
+        "_found_font = None\n"
+        "for _fn in _cn_font_names:\n"
+        "    _matches = [f for f in fm.fontManager.ttflist if _fn in f.name]\n"
+        "    if _matches:\n"
+        "        _found_font = _fn\n"
+        "        break\n"
+        "if _found_font:\n"
+        "    plt.rcParams['font.sans-serif'] = [_found_font, 'DejaVu Sans']\n"
+        "    plt.rcParams['axes.unicode_minus'] = False\n"
+        "\n"
+    )
+
+    # 写入临时脚本（注入字体配置 + 用户代码）
     script_path = os.path.join(OUTPUTS_DIR, "_temp_script.py")
     with open(script_path, "w", encoding="utf-8") as f:
-        f.write(code)
+        f.write(font_preamble + code)
 
     try:
         result = subprocess.run(
             [sys.executable, script_path],
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=60,
             cwd=OUTPUTS_DIR,
         )
@@ -41,11 +66,14 @@ def run_python_code(code: str) -> str:
 
     output_parts = []
 
-    if result.stdout.strip():
-        output_parts.append(f"STDOUT:\n{result.stdout.strip()}")
+    stdout = result.stdout or ""
+    stderr = result.stderr or ""
 
-    if result.returncode != 0 and result.stderr.strip():
-        output_parts.append(f"ERROR:\n{result.stderr.strip()}")
+    if stdout.strip():
+        output_parts.append(f"STDOUT:\n{stdout.strip()}")
+
+    if result.returncode != 0 and stderr.strip():
+        output_parts.append(f"ERROR:\n{stderr.strip()}")
 
     # 检测新生成的图片
     current_pngs = set(glob.glob(os.path.join(OUTPUTS_DIR, "*.png")))

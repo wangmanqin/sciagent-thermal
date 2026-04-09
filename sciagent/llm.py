@@ -150,6 +150,7 @@ class DeepSeekLLM:
             "model": self.model,
             "messages": oai_messages,
             "max_tokens": 4096,
+            "timeout": 120,  # 120秒超时，防止长时间无响应
         }
         if oai_tools:
             kwargs["tools"] = oai_tools
