@@ -64,33 +64,33 @@ Self-correction happens naturally: when code execution fails, the error message 
 
 ## Evaluation Results
 
-Tested on 10 scientific computing tasks spanning 7 categories (basic computation, equation solving, optimization, multi-objective optimization, statistics, signal processing, curve fitting):
+Tested on 10 microchannel heat sink domain tasks spanning 6 categories (heat transfer basics, fluid mechanics, microchannel thermal analysis, parametric study, optimization, multi-objective optimization, comprehensive design):
 
 | Metric | Result |
 |--------|--------|
-| First-attempt success | **10/10** |
-| Success after self-correction | 0/10 |
-| Failed | 0/10 |
-| Average time per task | 66.5s |
-| Average iterations per task | 1.6 |
+| Pass rate | **10/10 (100%)** |
+| Average score | **88.8/100** |
+| Average time per task | 260.7s |
+| Average iterations per task | 4.0 |
 
-| # | Task | Difficulty | Iterations | Time(s) |
-|---|------|-----------|-----------|---------|
-| 1 | Fibonacci sequence + plot | Easy | 1 | 28.8 |
-| 2 | Cubic equation root finding | Easy | 2 | 91.9 |
-| 3 | Rosenbrock optimization | Medium | 3 | 97.4 |
-| 4 | Bi-objective NSGA-II | Medium | 1 | 65.5 |
-| 5 | Normal distribution analysis | Easy | 1 | 46.0 |
-| 6 | ODE solving (RK4) | Medium | 1 | 63.1 |
-| 7 | Linear system solving | Easy | 3 | 95.5 |
-| 8 | TSP (simulated annealing) | Hard | 1 | 55.3 |
-| 9 | FFT signal analysis | Medium | 1 | 63.3 |
-| 10 | Exponential curve fitting | Medium | 2 | 58.6 |
+| # | Category | Difficulty | Score | Iterations | Time(s) |
+|---|----------|-----------|-------|-----------|---------|
+| 1 | Fin efficiency calculation | Easy | 100.0 | 5 | 276.2 |
+| 2 | Nu=3.66 verification | Easy | 100.0 | 5 | 269.1 |
+| 3 | Hydraulic diameter & friction | Easy | 100.0 | 1 | 51.5 |
+| 4 | Microchannel pressure drop | Medium | 68.0 | 2 | 99.3 |
+| 5 | Thermal resistance network | Medium | 100.0 | 7 | 404.2 |
+| 6 | Nu vs aspect ratio study | Medium | 86.7 | 2 | 96.3 |
+| 7 | Single-objective optimization | Medium | 86.7 | 5 | 338.1 |
+| 8 | Pump power & temperature rise | Easy | 86.7 | 2 | 164.0 |
+| 9 | NSGA-II bi-objective optimization | Hard | 80.0 | 5 | 477.0 |
+| 10 | Comprehensive design task | Hard | 80.0 | 6 | 431.2 |
 
 **Key Findings:**
-- **Multiple iterations ≠ errors.** Tasks with 2-3 iterations (e.g., Rosenbrock, linear system) were the agent proactively decomposing the task (compute → visualize → analyze), not fixing bugs.
-- **The agent consistently over-delivers.** For the ODE task, it autonomously verified convergence order. For TSP, it ran 10 independent trials to validate solution stability. These were not requested — the agent decided they were scientifically appropriate.
-- **Current benchmark did not trigger self-correction.** Future work should include adversarial tests (incorrect formulas, uncommon libraries, edge cases) to probe failure boundaries.
+- **Strong on explicit-formula tasks.** 4 tasks with clearly specified formulas scored 96.7 average — Agent reliably translates formulas into correct code.
+- **Domain formula ambiguity is the main failure mode.** Task #4 scored lowest (68) because the Agent used Fanning friction factor instead of Poiseuille number — a 4x difference due to convention ambiguity in heat transfer literature. This reveals LLM limitations in domain-specific conventions.
+- **Self-correction works.** Agent recovered from subprocess errors and encoding issues via ReAct's observe→think→act cycle.
+- **Scoring system sensitivity.** Some score losses (e.g., 0.107W vs 107.1mW) were unit format mismatches, not calculation errors. Future work: unit-normalized evaluation.
 
 ## Quick Start
 
@@ -101,8 +101,8 @@ Tested on 10 scientific computing tasks spanning 7 categories (basic computation
 ### Installation
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/sciagent.git
-cd sciagent
+git clone https://github.com/wangmanqin/sciagent-thermal.git
+cd sciagent-thermal
 pip install -r requirements.txt
 cp .env.example .env
 # Edit .env and add your DEEPSEEK_API_KEY
