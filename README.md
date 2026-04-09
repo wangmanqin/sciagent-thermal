@@ -64,21 +64,33 @@ Self-correction happens naturally: when code execution fails, the error message 
 
 ## Evaluation Results
 
-Tested on 10 scientific computing tasks of varying complexity:
+Tested on 10 scientific computing tasks spanning 7 categories (basic computation, equation solving, optimization, multi-objective optimization, statistics, signal processing, curve fitting):
 
-| Category | Count | Details |
-|----------|-------|---------|
-| First-attempt success | _/10 | Agent generated correct code on the first try |
-| Success after self-correction | _/10 | Agent encountered errors but fixed them autonomously |
-| Failed | _/10 | Agent could not solve within the iteration limit |
+| Metric | Result |
+|--------|--------|
+| First-attempt success | **10/10** |
+| Success after self-correction | 0/10 |
+| Failed | 0/10 |
+| Average time per task | 66.5s |
+| Average iterations per task | 1.6 |
 
-<!-- TODO: fill in actual numbers from testing -->
+| # | Task | Difficulty | Iterations | Time(s) |
+|---|------|-----------|-----------|---------|
+| 1 | Fibonacci sequence + plot | Easy | 1 | 28.8 |
+| 2 | Cubic equation root finding | Easy | 2 | 91.9 |
+| 3 | Rosenbrock optimization | Medium | 3 | 97.4 |
+| 4 | Bi-objective NSGA-II | Medium | 1 | 65.5 |
+| 5 | Normal distribution analysis | Easy | 1 | 46.0 |
+| 6 | ODE solving (RK4) | Medium | 1 | 63.1 |
+| 7 | Linear system solving | Easy | 3 | 95.5 |
+| 8 | TSP (simulated annealing) | Hard | 1 | 55.3 |
+| 9 | FFT signal analysis | Medium | 1 | 63.3 |
+| 10 | Exponential curve fitting | Medium | 2 | 58.6 |
 
 **Key Findings:**
-<!-- TODO: fill in from TEST_LOG.md observations -->
-- (Finding 1)
-- (Finding 2)
-- (Finding 3)
+- **Multiple iterations ≠ errors.** Tasks with 2-3 iterations (e.g., Rosenbrock, linear system) were the agent proactively decomposing the task (compute → visualize → analyze), not fixing bugs.
+- **The agent consistently over-delivers.** For the ODE task, it autonomously verified convergence order. For TSP, it ran 10 independent trials to validate solution stability. These were not requested — the agent decided they were scientifically appropriate.
+- **Current benchmark did not trigger self-correction.** Future work should include adversarial tests (incorrect formulas, uncommon libraries, edge cases) to probe failure boundaries.
 
 ## Quick Start
 

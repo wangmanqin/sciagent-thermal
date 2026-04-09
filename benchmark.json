@@ -1,0 +1,183 @@
+[
+  {
+    "id": 1,
+    "category": "basic_computation",
+    "difficulty": "easy",
+    "query": "计算斐波那契数列前20项并画折线图",
+    "ground_truth": {
+      "description": "斐波那契数列前20项",
+      "expected_values": [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765],
+      "key_checks": [
+        "第20项应为6765",
+        "应生成折线图PNG文件"
+      ],
+      "verification_code": "fib = [1, 1]\nfor i in range(18): fib.append(fib[-1] + fib[-2])\nassert fib[-1] == 6765"
+    }
+  },
+  {
+    "id": 2,
+    "category": "equation_solving",
+    "difficulty": "easy",
+    "query": "求解方程 x^3 - 2x - 5 = 0 的所有实数根，画出函数图像",
+    "ground_truth": {
+      "description": "三次方程求根",
+      "expected_values": [2.0946],
+      "tolerance": 0.001,
+      "key_checks": [
+        "唯一实数根约为 2.0946",
+        "应生成函数图像PNG文件",
+        "图像应显示函数与x轴的交点"
+      ],
+      "verification_code": "import numpy as np\nfrom numpy.polynomial import polynomial as P\nroots = np.roots([1, 0, -2, -5])\nreal_roots = roots[np.isreal(roots)].real\nassert any(abs(r - 2.0946) < 0.001 for r in real_roots)"
+    }
+  },
+  {
+    "id": 3,
+    "category": "optimization",
+    "difficulty": "medium",
+    "query": "用scipy最小化 Rosenbrock 函数 f(x,y)=(1-x)^2+100(y-x^2)^2，初始点(0,0)，画等高线图并标出最优点",
+    "ground_truth": {
+      "description": "Rosenbrock函数优化（经典测试函数）",
+      "expected_values": {"x": 1.0, "y": 1.0, "f_min": 0.0},
+      "tolerance": 0.01,
+      "key_checks": [
+        "最优解应为 (1, 1)",
+        "最小值应为 0（或非常接近0）",
+        "应生成等高线图PNG文件",
+        "图中应标出最优点位置"
+      ],
+      "verification_code": "from scipy.optimize import minimize\nfrom scipy.optimize import rosen\nresult = minimize(rosen, [0, 0], method='Nelder-Mead')\nassert abs(result.x[0] - 1.0) < 0.01 and abs(result.x[1] - 1.0) < 0.01\nassert result.fun < 1e-6"
+    }
+  },
+  {
+    "id": 4,
+    "category": "multi_objective",
+    "difficulty": "medium",
+    "query": "用NSGA-II算法优化双目标问题：最小化 f1=x^2, f2=(x-2)^2, x在[-5,5]范围内，画出Pareto前沿",
+    "ground_truth": {
+      "description": "双目标优化的Pareto前沿",
+      "expected_values": {"pareto_x_range": [0, 2]},
+      "key_checks": [
+        "Pareto最优解的x值应在[0, 2]区间内",
+        "f1和f2应呈此消彼长的关系（trade-off）",
+        "当x=0时f1=0,f2=4；当x=2时f1=4,f2=0",
+        "应生成Pareto前沿图PNG文件",
+        "Pareto前沿应为连续曲线"
+      ],
+      "verification_code": "import numpy as np\nx = np.linspace(0, 2, 100)\nf1 = x**2\nf2 = (x-2)**2\nassert all(f1 + f2 >= 0)  # basic sanity\nassert abs(f1[0] - 0) < 0.01 and abs(f2[0] - 4) < 0.01\nassert abs(f1[-1] - 4) < 0.01 and abs(f2[-1] - 0) < 0.01"
+    }
+  },
+  {
+    "id": 5,
+    "category": "statistics",
+    "difficulty": "easy",
+    "query": "生成1000个服从正态分布N(50,10)的随机数，计算均值、标准差、中位数，画直方图和正态拟合曲线",
+    "ground_truth": {
+      "description": "正态分布统计分析",
+      "expected_values": {"mean_approx": 50, "std_approx": 10},
+      "tolerance": 2.0,
+      "key_checks": [
+        "均值应接近50（误差<2）",
+        "标准差应接近10（误差<2）",
+        "中位数应接近50（误差<3）",
+        "应生成直方图PNG文件",
+        "直方图应叠加正态拟合曲线"
+      ],
+      "verification_code": "import numpy as np\nnp.random.seed(42)\ndata = np.random.normal(50, 10, 1000)\nassert abs(np.mean(data) - 50) < 2\nassert abs(np.std(data) - 10) < 2"
+    }
+  },
+  {
+    "id": 6,
+    "category": "equation_solving",
+    "difficulty": "medium",
+    "query": "用龙格-库塔法(RK4)数值求解常微分方程 dy/dx = -2y + x, y(0)=1, 在x=[0,5]上求解，与解析解对比画图",
+    "ground_truth": {
+      "description": "ODE数值解 vs 解析解",
+      "expected_values": {
+        "analytical_solution": "y = (2x-1)/4 + (5/4)*exp(-2x)",
+        "y_at_x5_approx": 2.25
+      },
+      "tolerance": 0.01,
+      "key_checks": [
+        "解析解为 y = (2x-1)/4 + (5/4)*exp(-2x)",
+        "x=5处y值应约为2.25",
+        "数值解应与解析解高度吻合（误差<0.01）",
+        "应生成对比图PNG文件"
+      ],
+      "verification_code": "import numpy as np\nx = 5.0\ny_exact = (2*x - 1)/4 + (5/4)*np.exp(-2*x)\nassert abs(y_exact - 2.25) < 0.01"
+    }
+  },
+  {
+    "id": 7,
+    "category": "linear_algebra",
+    "difficulty": "easy",
+    "query": "求解线性方程组 3x+2y-z=1, 2x-2y+4z=-2, -x+0.5y-z=0，验证解的正确性",
+    "ground_truth": {
+      "description": "线性方程组求解",
+      "expected_values": {"x": 1.0, "y": -2.0, "z": -2.0},
+      "tolerance": 0.001,
+      "key_checks": [
+        "x = 1",
+        "y = -2",
+        "z = -2",
+        "代入原方程验证：3(1)+2(-2)-(-2)=1 ✓",
+        "2(1)-2(-2)+4(-2)=-2 ✓",
+        "-1+0.5(-2)-(-2)=0 ✓"
+      ],
+      "verification_code": "import numpy as np\nA = np.array([[3,2,-1],[2,-2,4],[-1,0.5,-1]])\nb = np.array([1,-2,0])\nx = np.linalg.solve(A, b)\nassert np.allclose(x, [1, -2, -2], atol=0.001)"
+    }
+  },
+  {
+    "id": 8,
+    "category": "optimization",
+    "difficulty": "hard",
+    "query": "用模拟退火算法求解旅行商问题(TSP)：10个城市坐标为(0,0),(1,5),(2,3),(5,4),(6,1),(8,6),(7,2),(3,7),(4,1),(9,3)，求最短路径并画出路径图",
+    "ground_truth": {
+      "description": "10城市TSP问题",
+      "expected_values": {"optimal_distance_upper_bound": 30.0},
+      "key_checks": [
+        "总路径长度应在合理范围内（<30）",
+        "路径应访问所有10个城市恰好一次并返回起点",
+        "应生成路径图PNG文件",
+        "模拟退火是启发式算法，结果可能每次不同但应接近最优"
+      ],
+      "verification_code": "# TSP是NP-hard问题，只验证路径合理性\nimport numpy as np\ncities = [(0,0),(1,5),(2,3),(5,4),(6,1),(8,6),(7,2),(3,7),(4,1),(9,3)]\ndef path_length(order, cities):\n    d = 0\n    for i in range(len(order)):\n        c1, c2 = cities[order[i]], cities[order[(i+1)%len(order)]]\n        d += np.sqrt((c1[0]-c2[0])**2 + (c1[1]-c2[1])**2)\n    return d\n# 顺序遍历的距离作为上界\nassert path_length(list(range(10)), cities) < 40"
+    }
+  },
+  {
+    "id": 9,
+    "category": "signal_processing",
+    "difficulty": "medium",
+    "query": "生成一个包含50Hz和120Hz成分的信号（采样率1000Hz，持续1秒），加入噪声后用FFT分析频谱，画时域和频域图",
+    "ground_truth": {
+      "description": "信号频谱分析",
+      "expected_values": {"freq_peaks": [50, 120]},
+      "tolerance": 2.0,
+      "key_checks": [
+        "FFT频谱中应在50Hz和120Hz处有明显峰值",
+        "采样率1000Hz，信号长度1秒，共1000个采样点",
+        "频率分辨率应为1Hz",
+        "应生成时域图和频域图PNG文件"
+      ],
+      "verification_code": "import numpy as np\nfs = 1000; t = np.arange(0, 1, 1/fs)\nsignal = np.sin(2*np.pi*50*t) + np.sin(2*np.pi*120*t)\nfft_vals = np.abs(np.fft.fft(signal))\nfreqs = np.fft.fftfreq(len(signal), 1/fs)\npositive = freqs > 0\npeak_freqs = freqs[positive][np.argsort(fft_vals[positive])[-2:]]\nassert 49 < min(peak_freqs) < 51 and 119 < max(peak_freqs) < 121"
+    }
+  },
+  {
+    "id": 10,
+    "category": "curve_fitting",
+    "difficulty": "medium",
+    "query": "对数据点 x=[0,1,2,3,4,5], y=[2.1, 7.7, 13.6, 27.2, 40.9, 61.1] 进行指数拟合 y=a*exp(b*x)+c，画出数据点和拟合曲线，给出拟合参数和R^2值",
+    "ground_truth": {
+      "description": "指数函数拟合",
+      "expected_values": {"a_approx": 2.0, "b_approx": 0.6, "R2_min": 0.99},
+      "key_checks": [
+        "拟合应使用 y = a*exp(b*x) + c 形式",
+        "R^2值应大于0.99（拟合良好）",
+        "拟合曲线应通过或接近所有数据点",
+        "应生成散点图+拟合曲线PNG文件",
+        "应输出拟合参数a, b, c的值"
+      ],
+      "verification_code": "import numpy as np\nfrom scipy.optimize import curve_fit\ndef model(x, a, b, c): return a * np.exp(b * x) + c\nx = np.array([0,1,2,3,4,5])\ny = np.array([2.1, 7.7, 13.6, 27.2, 40.9, 61.1])\npopt, _ = curve_fit(model, x, y, p0=[1, 0.5, 1])\ny_pred = model(x, *popt)\nss_res = np.sum((y - y_pred)**2)\nss_tot = np.sum((y - np.mean(y))**2)\nR2 = 1 - ss_res/ss_tot\nassert R2 > 0.99"
+    }
+  }
+]
