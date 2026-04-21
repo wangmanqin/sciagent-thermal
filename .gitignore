@@ -9,3 +9,9 @@ SciAgent_自动测试技术视角.md
 INTERVIEW_PREP.md
 DEEP_DIVE.md
 RESUME_PROJECT.md
+
+# finetune: exclude model weights and large artifacts
+finetune/qwen-*-lora/
+finetune/outputs/
+finetune/eval_results/
+*.safetensors

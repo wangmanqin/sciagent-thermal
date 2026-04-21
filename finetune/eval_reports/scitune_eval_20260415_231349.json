@@ -1,0 +1,164 @@
+{
+  "timestamp": "20260415_231349",
+  "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "summaries": {
+    "raw": {
+      "avg_score": 45.0,
+      "pass_count": 0,
+      "total": 3,
+      "pass_rate": "0.0%",
+      "max_score": 50,
+      "min_score": 35
+    },
+    "sft": {
+      "avg_score": 50.0,
+      "pass_count": 0,
+      "total": 3,
+      "pass_rate": "0.0%",
+      "max_score": 50,
+      "min_score": 50
+    },
+    "dpo": {
+      "avg_score": 55.0,
+      "pass_count": 1,
+      "total": 3,
+      "pass_rate": "33.3%",
+      "max_score": 65,
+      "min_score": 50
+    }
+  },
+  "detailed_results": {
+    "raw": [
+      {
+        "id": 1,
+        "category": "heat_transfer_basics",
+        "question": "计算矩形肋片的效率。已知：肋片材料为硅(导热系数k=148 W/mK)，肋片高度H=0.3mm，肋片厚度t=0.05mm，对流换热系数h=10000 W/m^2",
+        "model": "raw",
+        "response": "要解决这个问题，我们首先需要计算肋片效率η，并根据给定的条件绘制肋片效率随高度的变化曲线。下面是一个完整的Python代码实现：\n\n```python\nimport numpy as np\n\n# 物理参数\nk = 148 # 导热系数 (W/mK)\nh = 10000 # 对流换热系数 (W/m²K)\n\n# 零点温度和表面温度差\nT_inf = 600 # 环境温度 (℃)\nTa = T_inf - h / k * np.sqrt(2 * h / (k * t))\n\n# 肋片厚度与高度比例\nratio = t / H\n\n# 计算肋片效率 η\nm = np.sqrt(2 * h / (k * t))\neta = m * ratio / (m + ratio)\n\n# 绘制肋片效率随高度变化的曲线\nheights = np.linspace(0.1, 1.0, 100)\nefficiencies = eta * heights\n\n# 输出结果\nprint(\"肋片效率 η:\", eta[0], \"，对应的高度 H:\", H[0])\n\nimport matplotlib.pyplot as pl",
+        "code_extracted": "import numpy as np\n\n# 物理参数\nk = 148 # 导热系数 (W/mK)\nh = 10000 # 对流换热系数 (W/m²K)\n\n# 零点温度和表面温度差\nT_inf = 600 # 环境温度 (℃)\nTa = T_inf - h / k * np.sqrt(2 * h / (k * t))\n\n# 肋片厚度与高度比例\nratio = t / H\n\n# 计算肋片效率 η\nm = np.sqrt(2 * h / (k * t))\neta = m * ratio / (m + ratio)\n\n# 绘制肋片效率随高度变化的曲线\nheights = np.linspace(0.1",
+        "code_success": false,
+        "code_output": "",
+        "code_error": "NameError: name 't' is not defined",
+        "score": 50,
+        "score_details": "[PASS] 包含 import 语句 (+15)\n[PASS] 包含 print 输出 (+15)\n[FAIL] 代码执行失败: NameError: name 't' is not defined (+0/30)\n[FAIL] 输出中无数值结果 (+0/20)\n[PASS] 包含解释文字 (+10)\n[PASS] 回答结构清晰 (+10)",
+        "elapsed": 24.5
+      },
+      {
+        "id": 5,
+        "category": "microchannel_thermal",
+        "question": "用一维热阻网络模型计算矩形微通道散热器的总热阻。参数：硅基底(k_si=148 W/mK)，基底厚度t_base=0.1mm，通道宽度Wc=0.1mm，高度Hc",
+        "model": "raw",
+        "response": "首先，我们需要导入必要的库，并定义变量。\n\n```python\nimport numpy as np\nfrom scipy.integrate import odeint\n\n# 参数设置\nk_si = 148 # 硅基底热导率 (W/m K)\nt_base = 0.1e-3 # 基底厚度 (m)\nWc = 0.1e-3 # 通道宽度 (m)\nHc = 0.3e-3 # 通道高度 (m)\nWw = 0.05e-3 # 背面壁厚 (m)\nL = 10e-3 # 通道长度 (m)\nDh = 1/(np.sqrt(2 * Hc / k_si * Ww)) # 水的导热系数 (W/m K)\n\n# 对流换热系数计算\nnu = 4.0\nkf = 0.613 # 水的热导率 (W/m K)\nDh *= kf\nhf = nu * kf / Dh  # 对流换热系数 (W/m^2 K)\n\n# 面积和长度\nA_chip = np.pi * W_chip * L\nA_fin = 2 * Hc * L\nA_bottom = Wc * L\n\n# 利用欧拉公式计算对流热阻\ndef convective_heat_r",
+        "code_extracted": "import numpy as np\nfrom scipy.integrate import odeint\n\n# 参数设置\nk_si = 148 # 硅基底热导率 (W/m K)\nt_base = 0.1e-3 # 基底厚度 (m)\nWc = 0.1e-3 # 通道宽度 (m)\nHc = 0.3e-3 # 通道高度 (m)\nWw = 0.05e-3 # 背面壁厚 (m)\nL = 10e-3 # 通道长度 (m)\nDh = 1/(np.sqrt(2 * Hc / k_si * Ww)) # 水的导热系数 (W/m K)\n\n# 对流换热系数计算\nnu = 4.0\nkf = 0.613 # 水的热导",
+        "code_success": false,
+        "code_output": "",
+        "code_error": "ModuleNotFoundError: No module named 'scipy'",
+        "score": 35,
+        "score_details": "[PASS] 包含 import 语句 (+15)\n[FAIL] 缺少 print 输出 (+0/15)\n[FAIL] 代码执行失败: ModuleNotFoundError: No module named 'scipy' (+0/30)\n[FAIL] 输出中无数值结果 (+0/20)\n[PASS] 包含解释文字 (+10)\n[PASS] 回答结构清晰 (+10)",
+        "elapsed": 27.9
+      },
+      {
+        "id": 8,
+        "category": "microchannel_thermal",
+        "question": "计算微通道散热器的泵功率和温升。已知：散热器有66个通道，单通道流速u=1m/s，通道截面Wc=0.1mm*Hc=0.3mm，压降dP=54.1kPa，芯片热功",
+        "model": "raw",
+        "response": "为了完成这个任务，我们需要进行以下步骤：\n\n1. 计算总泵功率。\n2. 计算芯片最高温度。\n3. 计算水的温升。\n4. 绘制芯片温度随热功率变化的曲线。\n\n下面是详细的Python代码实现：\n\n```python\nimport numpy as np\n\n# Given values\nN = 66  # Number of channels\nu = 1    # Channel flow velocity (m/s)\nWc = 0.0001  # Channel cross-sectional area (m^2)\nHc = 0.0003  # Channel height (m)\ndP = 54.1e3  # Pressure drop across the channel (kPa)\nP = 100  # Chip power (W)\nR_total = 0.154  # Total thermal resistance (K/W)\nT_in = 25  # Cooling water inlet temperature (C)\n\n# Constants for water prop",
+        "code_extracted": "import numpy as np\n\n# Given values\nN = 66  # Number of channels\nu = 1    # Channel flow velocity (m/s)\nWc = 0.0001  # Channel cross-sectional area (m^2)\nHc = 0.0003  # Channel height (m)\ndP = 54.1e3  # Pressure drop across the channel (kPa)\nP = 100  # Chip power (W)\nR_total = 0.154  # Total thermal ",
+        "code_success": false,
+        "code_output": "",
+        "code_error": "SyntaxError: unterminated string literal (detected at line 33) (<string>, line 33)",
+        "score": 50,
+        "score_details": "[PASS] 包含 import 语句 (+15)\n[PASS] 包含 print 输出 (+15)\n[FAIL] 代码执行失败: SyntaxError: unterminated string literal (detected at line 33) (<string>, line 33) (+0/30)\n[FAIL] 输出中无数值结果 (+0/20)\n[PASS] 包含解释文字 (+10)\n[PASS] 回答结构清晰 (+10)",
+        "elapsed": 27.8
+      }
+    ],
+    "sft": [
+      {
+        "id": 1,
+        "category": "heat_transfer_basics",
+        "question": "计算矩形肋片的效率。已知：肋片材料为硅(导热系数k=148 W/mK)，肋片高度H=0.3mm，肋片厚度t=0.05mm，对流换热系数h=10000 W/m^2",
+        "model": "sft",
+        "response": "**原理：** 肋片效率通过公式 η = tanh(mH) / mH 来计算，其中 m 由对流换热系数 h、导热系数 k 和肋片厚度 t 确定。\n\n```python\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n# 定义变量和常数\nk = 148 # 导热系数 (W/m·K)\nt = 0.05 # 肋片厚度 (mm)\nh = 10000 # 对流换热系数 (W/m²·K)\n\n# 计算肋片有效厚度 m\nm = np.sqrt(2 * h / (k * t))\n\n# 计算不同高度下的效率值\nH_values = np.linspace(0.1, 1.0, 50)  # 高度从0.1mm到1.0mm\neta_values = H_values * np.tanh(H_values) / m\n\n# 输出结果\nprint(\"导热系数 k =\", k, \"W/m·K\")\nprint(\"肋片高度 H (mm):\", H_values[-1], \"<--->\", H_values[0])\nprint(\"肋片厚度 t (mm):\", t)\npr",
+        "code_extracted": "import numpy as np\nimport matplotlib.pyplot as plt\n\n# 定义变量和常数\nk = 148 # 导热系数 (W/m·K)\nt = 0.05 # 肋片厚度 (mm)\nh = 10000 # 对流换热系数 (W/m²·K)\n\n# 计算肋片有效厚度 m\nm = np.sqrt(2 * h / (k * t))\n\n# 计算不同高度下的效率值\nH_values = np.linspace(0.1, 1.0, 50)  # 高度从0.1mm到1.0mm\neta_values = H_values * np.tanh(H_values) / m\n\n# 输出结果",
+        "code_success": false,
+        "code_output": "",
+        "code_error": "ModuleNotFoundError: No module named 'matplotlib'",
+        "score": 50,
+        "score_details": "[PASS] 包含 import 语句 (+15)\n[PASS] 包含 print 输出 (+15)\n[FAIL] 代码执行失败: ModuleNotFoundError: No module named 'matplotlib' (+0/30)\n[FAIL] 输出中无数值结果 (+0/20)\n[PASS] 包含解释文字 (+10)\n[PASS] 回答结构清晰 (+10)",
+        "elapsed": 38.8
+      },
+      {
+        "id": 5,
+        "category": "microchannel_thermal",
+        "question": "用一维热阻网络模型计算矩形微通道散热器的总热阻。参数：硅基底(k_si=148 W/mK)，基底厚度t_base=0.1mm，通道宽度Wc=0.1mm，高度Hc",
+        "model": "sft",
+        "response": "**原理**：通过将热阻网络分解成传导热阻和对流-辐射热阻，使用Nu公式估算对流换热系数，并根据通道数和通道尺寸计算各分量热阻，最后叠加得到总热阻。\n\n```python\nimport numpy as np\nimport matplotlib.pyplot as plt\n\n# 参数设置\nk_si = 148  # 硅基底热导率 (W/m K)\nt_base = 0.1e-3  # 基底厚度 (m)\nWc = 0.1e-3  # 通道宽度 (m)\nHc = 0.3e-3  # 通道高度 (m)\nL = 10e-3  # 芯片长度 (m)\nW_chip = 10e-3  # 芯片宽度 (m)\nhf = 0.613  # 水热导率 (W/m K)\n\n# 计算对流换热系数\nNu = 4.0\nDh = L / W_chip\nh = Nu * hf / Dh\n\n# 通道数量 N 和肋片效率 eta\nN = int(L / W_chip)\nWw = 0.05e-3  # 壁厚 (m)\nA_fin = 2 * Hc * L\nA_bottom = Wc * L\neta = np.sqrt(2 * h ",
+        "code_extracted": "import numpy as np\nimport matplotlib.pyplot as plt\n\n# 参数设置\nk_si = 148  # 硅基底热导率 (W/m K)\nt_base = 0.1e-3  # 基底厚度 (m)\nWc = 0.1e-3  # 通道宽度 (m)\nHc = 0.3e-3  # 通道高度 (m)\nL = 10e-3  # 芯片长度 (m)\nW_chip = 10e-3  # 芯片宽度 (m)\nhf = 0.613  # 水热导率 (W/m K)\n# 计算对流换热系数\nNu = 4.0\nDh = L / W_chip\nh = Nu * hf / Dh\n# 通道数量 ",
+        "code_success": false,
+        "code_output": "",
+        "code_error": "SyntaxError: '(' was never closed (<string>, line 36)",
+        "score": 50,
+        "score_details": "[PASS] 包含 import 语句 (+15)\n[PASS] 包含 print 输出 (+15)\n[FAIL] 代码执行失败: SyntaxError: '(' was never closed (<string>, line 36) (+0/30)\n[FAIL] 输出中无数值结果 (+0/20)\n[PASS] 包含解释文字 (+10)\n[PASS] 回答结构清晰 (+10)",
+        "elapsed": 39.1
+      },
+      {
+        "id": 8,
+        "category": "microchannel_thermal",
+        "question": "计算微通道散热器的泵功率和温升。已知：散热器有66个通道，单通道流速u=1m/s，通道截面Wc=0.1mm*Hc=0.3mm，压降dP=54.1kPa，芯片热功",
+        "model": "sft",
+        "response": "**原理：** 假设泵为离心泵，将管道简化为连续流动的理想情况，利用能量方程计算泵功，并通过温差公式求解温升。\n\n```python\nimport numpy as np\n\n# 参数设置\nN = 66       # 池数\nu = 1        # 流速 m/s\nWc = 0.1    # 截面积 mm^2 (假设 Wc * Hc = 0.1 * 0.3 = 0.03 cm²)\nHc = 0.3    # 高度 mm\ndP = 54.1   # 压降 kPa\nP_chip = 100  # 芯片热功率 W\nR_total = 0.154  # 总热阻 K/W\nT_in = 25     # 冷却水入口温度 C\n\n# 计算泵功率（理想离心泵）\nQ_ch = u * Wc * Hc  # 流通量 m³/s\nN_avg = N / Q_ch     # 平均叶轮转速 r/min\nη = 0.8            # 理想效率系数\nW_pump = N * dP * η  # 泵功 kW\n\n# 计算芯片最高温度\nT_max = T_in + P_chip * R_total  # 最高",
+        "code_extracted": "import numpy as np\n\n# 参数设置\nN = 66       # 池数\nu = 1        # 流速 m/s\nWc = 0.1    # 截面积 mm^2 (假设 Wc * Hc = 0.1 * 0.3 = 0.03 cm²)\nHc = 0.3    # 高度 mm\ndP = 54.1   # 压降 kPa\nP_chip = 100  # 芯片热功率 W\nR_total = 0.154  # 总热阻 K/W\nT_in = 25     # 冷却水入口温度 C\n# 计算泵功率（理想离心泵）\nQ_ch = u * Wc * Hc  # 流通量 m³/s\nN_avg = N ",
+        "code_success": false,
+        "code_output": "",
+        "code_error": "SyntaxError: unterminated string literal (detected at line 33) (<string>, line 33)",
+        "score": 50,
+        "score_details": "[PASS] 包含 import 语句 (+15)\n[PASS] 包含 print 输出 (+15)\n[FAIL] 代码执行失败: SyntaxError: unterminated string literal (detected at line 33) (<string>, line 33) (+0/30)\n[FAIL] 输出中无数值结果 (+0/20)\n[PASS] 包含解释文字 (+10)\n[PASS] 回答结构清晰 (+10)",
+        "elapsed": 35.6
+      }
+    ],
+    "dpo": [
+      {
+        "id": 1,
+        "category": "heat_transfer_basics",
+        "question": "计算矩形肋片的效率。已知：肋片材料为硅(导热系数k=148 W/mK)，肋片高度H=0.3mm，肋片厚度t=0.05mm，对流换热系数h=10000 W/m^2",
+        "model": "dpo",
+        "response": "```python\nimport numpy as np\r\nimport matplotlib.pyplot as plt\r\n\r\n# 参数定义\r\nk = 148 # 导热系数 (W/m*K)\r\nH_range = np.arange(0.1, 1.0, 0.1) # 肋片高度范围 (mm)\r\n\r\ndef calculate_efficiency(H):\r\n    m = np.sqrt(2 * H / (k * t))\r\n    return np.tanh(m * H) / (m * H)\r\n\r\n# 计算肋片效率\r\nefficiency_values = [calculate_efficiency(H) for H in H_range]\r\n\r\n# 绘制效率随高度的变化曲线\r\nplt.plot(H_range, efficiency_values, label='η')\r\nplt.xlabel('Height (mm)')\r\nplt.ylabel('Efficiency (%)')\r\nplt.title('Louver Efficiency Curve')\r\nplt.legend()",
+        "code_extracted": "import numpy as np\r\nimport matplotlib.pyplot as plt\r\n\r\n# 参数定义\r\nk = 148 # 导热系数 (W/m*K)\r\nH_range = np.arange(0.1, 1.0, 0.1) # 肋片高度范围 (mm)\r\n\r\ndef calculate_efficiency(H):\r\n    m = np.sqrt(2 * H / (k * t))\r\n    return np.tanh(m * H) / (m * H)\r\n\r\n# 计算肋片效率\r\nefficiency_values = [calculate_efficiency(H) for",
+        "code_success": false,
+        "code_output": "",
+        "code_error": "ModuleNotFoundError: No module named 'matplotlib'",
+        "score": 50,
+        "score_details": "[PASS] 包含 import 语句 (+15)\n[PASS] 包含 print 输出 (+15)\n[FAIL] 代码执行失败: ModuleNotFoundError: No module named 'matplotlib' (+0/30)\n[FAIL] 输出中无数值结果 (+0/20)\n[PASS] 包含解释文字 (+10)\n[PASS] 回答结构清晰 (+10)",
+        "elapsed": 19.0
+      },
+      {
+        "id": 5,
+        "category": "microchannel_thermal",
+        "question": "用一维热阻网络模型计算矩形微通道散热器的总热阻。参数：硅基底(k_si=148 W/mK)，基底厚度t_base=0.1mm，通道宽度Wc=0.1mm，高度Hc",
+        "model": "dpo",
+        "response": "首先，我们需要导入必要的库和定义常量：\n\n```python\nimport numpy as np\n\n# 常量定义\nk_si = 148.0  # 硅基底导热系数 (W/mK)\nt_base = 0.1e-3  # 基底厚度 (m)\n\n# 物性参数\nkf = 0.613  # 水导热系数 (W/mK)\nd_h = 1.0e-6  # 对流换热系数 (m^2/s)\nDh = d_h * t_base  # 总热阻 (m^2/K)\n```\n\n接下来，我们计算基底导热热阻 `R_cond` 和对流热阻 `R_conv`。\n\n```python\ndef base_conduction_heat_resistance(w_c, w_w):\n    return t_base / (k_si * w_c)\n\n\ndef convective_heat_resistance(eta, w_c, h, dh, df, d_h, dh_f):\n    A_fin = 2 * Hc * L\n    A_bottom = w_c * L\n    N = w_chip / (w_c + w_w)\n    \n  ",
+        "code_extracted": "import numpy as np\n\n# 常量定义\nk_si = 148.0  # 硅基底导热系数 (W/mK)\nt_base = 0.1e-3  # 基底厚度 (m)\n\n# 物性参数\nkf = 0.613  # 水导热系数 (W/mK)\nd_h = 1.0e-6  # 对流换热系数 (m^2/s)\nDh = d_h * t_base  # 总热阻 (m^2/K)\n",
+        "code_success": true,
+        "code_output": "",
+        "code_error": "",
+        "score": 65,
+        "score_details": "[PASS] 包含 import 语句 (+15)\n[FAIL] 缺少 print 输出 (+0/15)\n[PASS] 代码执行成功 (+30)\n[FAIL] 输出中无数值结果 (+0/20)\n[PASS] 包含解释文字 (+10)\n[PASS] 回答结构清晰 (+10)",
+        "elapsed": 32.1
+      },
+      {
+        "id": 8,
+        "category": "microchannel_thermal",
+        "question": "计算微通道散热器的泵功率和温升。已知：散热器有66个通道，单通道流速u=1m/s，通道截面Wc=0.1mm*Hc=0.3mm，压降dP=54.1kPa，芯片热功",
+        "model": "dpo",
+        "response": "```python\nimport numpy as np\n\n# Given parameters\nnum_channels = 66\nflow_rate_u = 1  # m/s\nchannel_area_WC = 0.1e-6 * 0.3e-6  # m^2\npressure_drop_dP = 54.1e3  # kPa\nchip_power_P = 100  # W\ntotal_resistance_R_total = 0.154 / (283 + 273)  # K/W\nwater_density_rho = 997  # kg/m^3\nspecific_heat_capacity_cp = 4179  # J/kg*K\n\n# Step 1: Calculate total pump power\n# Q_ch is the flow rate through one channel\n# N is the number of channels\nQ_ch = num_channels * flow_rate_u * channel_area_WC\nN = num_channels\n",
+        "code_extracted": "import numpy as np\n\n# Given parameters\nnum_channels = 66\nflow_rate_u = 1  # m/s\nchannel_area_WC = 0.1e-6 * 0.3e-6  # m^2\npressure_drop_dP = 54.1e3  # kPa\nchip_power_P = 100  # W\ntotal_resistance_R_total = 0.154 / (283 + 273)  # K/W\nwater_density_rho = 997  # kg/m^3\nspecific_heat_capacity_cp = 4179  ",
+        "code_success": false,
+        "code_output": "",
+        "code_error": "IndentationError: unexpected indent (<string>, line 43)",
+        "score": 50,
+        "score_details": "[PASS] 包含 import 语句 (+15)\n[PASS] 包含 print 输出 (+15)\n[FAIL] 代码执行失败: IndentationError: unexpected indent (<string>, line 43) (+0/30)\n[FAIL] 输出中无数值结果 (+0/20)\n[PASS] 包含解释文字 (+10)\n[PASS] 回答结构清晰 (+10)",
+        "elapsed": 31.9
+      }
+    ]
+  }
+}
