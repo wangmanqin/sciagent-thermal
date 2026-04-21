@@ -1,6 +1,7 @@
 .env
 __pycache__/
 *.pyc
+*.log
 outputs/*.py
 outputs/*.png
 outputs/*.csv
@@ -10,8 +11,3 @@ INTERVIEW_PREP.md
 DEEP_DIVE.md
 RESUME_PROJECT.md
 
-# finetune: exclude model weights and large artifacts
-finetune/qwen-*-lora/
-finetune/outputs/
-finetune/eval_results/
-*.safetensors
