@@ -6,7 +6,6 @@ LLM 调用封装层。
 import os
 import json
 from dotenv import load_dotenv
-from sciagent.tools import TOOL_DEFINITIONS
 
 load_dotenv()
 
