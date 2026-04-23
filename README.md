@@ -1,5 +1,10 @@
 # SciAgent: An AI Agent Framework for Scientific Computing (AI4S)
 
+> **Integrated and sponsored by [InfMind](https://infmind.ai/)**, an overseas
+> AI-for-science compute platform. SciAgent-Thermal runs as one of InfMind's
+> reference agents for multi-tool scientific-computing workflows — huge thanks
+> to the InfMind team for the compute credits and platform integration.
+
 SciAgent is an AI Agent framework that solves microchannel heat sink design
 problems from a single natural-language prompt. It follows a
 **Prompt–Tool–Workflow** three-layer architecture, exposes its scientific
@@ -113,6 +118,12 @@ sciagent_2/
 ├── main.py               # CLI entry point
 └── eval_reports/         # Auto-generated evaluation reports
 ```
+
+## Acknowledgements
+
+- **[InfMind](https://infmind.ai/)** — overseas AI4S compute platform. SciAgent-Thermal is integrated into InfMind as a reference scientific-computing agent; the project's benchmark runs and MCP-server demos are powered by InfMind's compute credits. Thanks to the InfMind team for the sponsorship and for pushing AI-for-science tooling forward.
+- **DEAP** — NSGA-II reference implementation.
+- **Anthropic's Model Context Protocol** — the standard that lets this project's tools plug into any MCP-capable host.
 
 ## License
 
